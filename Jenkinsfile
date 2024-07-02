@@ -14,6 +14,11 @@ pipeline {
         DOCKER_FILE_BACKEND = 'docker-backend'
     }
     stages {
+        stage('Clean Workspace') {
+            steps{
+                cleanWs()
+            }
+        }
         stage('Checkout SCM') {
             steps {
                 git url: "${env.GIT_REPO}"
