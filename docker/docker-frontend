@@ -8,8 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build \
-    && npm install -g serve
+RUN cd frontend && \
+    npm run build && \
+    npm install -g serve
 
 EXPOSE 3000
 
