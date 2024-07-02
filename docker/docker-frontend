@@ -4,14 +4,19 @@ WORKDIR /app
 
 COPY frontend/package*.json ./
 
+# Install dependencies
 RUN npm install
 
 COPY ./frontend .
 
-RUN cd frontend && \
-    npm run build && \
-    npm install -g serve
+# Build the React app
+RUN npm run build
+
+# Install a simple static server to serve the built React app
+RUN npm install -g serve
+
 
 EXPOSE 3000
 
+# Command to run the app
 CMD ["serve", "-s", "build"]
