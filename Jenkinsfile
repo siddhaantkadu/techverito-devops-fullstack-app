@@ -32,24 +32,24 @@ pipeline {
                         sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
                     }
                 }
-                stage('Build Backend') {
-                    steps {
-                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
-                    }
-                }
+                // stage('Build Backend') {
+                //     steps {
+                //         sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
+                //     }
+                // }
             }
         }
-        stage('Push Docker Images') {
-            steps {
-                script {
-                    docker.withRegistry('', 'DOCKERHUB_CREDS') {
-                        sh """
-                            docker push ${env.DOCKER_IMAGE_NAME}:frontend
-                            docker push ${env.DOCKER_IMAGE_NAME}:backend
-                        """
-                    }
-                }
-            }
-        }
+        // stage('Push Docker Images') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('', 'DOCKERHUB_CREDS') {
+        //                 sh """
+        //                     docker push ${env.DOCKER_IMAGE_NAME}:frontend
+        //                     docker push ${env.DOCKER_IMAGE_NAME}:backend
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
