@@ -39,17 +39,17 @@ pipeline {
                 }
             }
         }
-        // stage('Push Docker Images') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', 'DOCKERHUB_CREDS') {
-        //                 sh """
-        //                     docker push ${env.DOCKER_IMAGE_NAME}:frontend
-        //                     docker push ${env.DOCKER_IMAGE_NAME}:backend
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry('', 'DOCKERHUB_CREDS') {
+                        sh """
+                            docker push ${env.DOCKER_IMAGE_NAME}:frontend
+                            docker push ${env.DOCKER_IMAGE_NAME}:backend
+                        """
+                    }
+                }
+            }
+        }
     }
 }
