@@ -32,11 +32,11 @@ pipeline {
                         sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
                     }
                 }
-                // stage('Build Backend') {
-                //     steps {
-                //         sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
-                //     }
-                // }
+                stage('Build Backend') {
+                    steps {
+                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
+                    }
+                }
             }
         }
         // stage('Push Docker Images') {
