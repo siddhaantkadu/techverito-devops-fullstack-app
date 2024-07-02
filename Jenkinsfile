@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Checkout SCM') {
             steps {
-                git url: "${env.GIT_REPO}"
+                git url: "${env.GIT_REPO}",
                     branch: "${env.GIT_BRANCH}"
             }
         }
