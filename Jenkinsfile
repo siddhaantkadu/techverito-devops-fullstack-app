@@ -13,7 +13,7 @@ pipeline {
         DOCKER_FILE_FRONTEND = 'docker-froentend'
         DOCKER_FILE_BACKEND = 'docker-backend'
         AWS_DEFAULT_REGION = 'us-east-2'
-        EKS_AWS_ACCESS_KEY = 'AWS_TECHV_CREDS'
+        EKS_AWS_ACCESS_KEY = credentials('AWS_TECHV_CREDS')
     }
     stages {
         stage('Clean Workspace') {
