@@ -6,6 +6,9 @@ pipeline {
         timeout(time: 1, unit: 'HOURS')
         timestamps()
     }
+    parameters {
+        choice choices: ['apply', 'destroy'], description: 'Please select your action', name: 'TF_ACTION'
+    }
     environment { 
         GIT_REPO = 'https://github.com/siddhaantkadu/techverito-devops-fullstack-app.git'
         GIT_BRANCH = 'feature/siddhaant'
@@ -53,13 +56,23 @@ pipeline {
                 }
             }
         }
-        stage('Provision EKS Infrastructure') {
+        stage('Previewing the Infrastructure') {
+            steps {
+                dir('terraform') {
+                    sh """
+                        terraform init
+                        terraform plan
+                    """
+                }
+                input(message: 'Approve?', ok: 'Proceed')
+            }
+        }
+        stage('Create/Destory EKS Infrastructure') {
             steps {
                 dir('terraform') {
                     script {
                         sh """
-                            terraform init
-                            terraform apply -auto-approve
+                            terraform $TF_ACTION -auto-approve
                         """   
                     }
                 }
