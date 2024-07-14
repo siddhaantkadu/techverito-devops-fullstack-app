@@ -12,8 +12,8 @@ pipeline {
         DOCKER_IMAGE_NAME = 'siddhaant/techverito-devops-fullstack-app'
         DOCKER_FILE_FRONTEND = 'docker-froentend'
         DOCKER_FILE_BACKEND = 'docker-backend'
-        EKS_AWS_ACCESS_KEY = 'AWS_ACCESS_KEY'
-        EKS_AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
+        AWS_DEFAULT_REGION = 'us-east-2'
+        EKS_AWS_ACCESS_KEY = 'AWS_TECHV_CREDS'
     }
     stages {
         stage('Clean Workspace') {
@@ -27,45 +27,48 @@ pipeline {
                     branch: "${env.GIT_BRANCH}"
             }
         }
-        stage('Build Docker Image') {
-            parallel { 
-                stage('Build Frontend') {
-                    steps {
-                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
-                    }
-                }
-                stage('Build Backend') {
-                    steps {
-                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
-                    }
-                }
-            }
-        }
-        stage('Push Docker Images') {
+        stage('AWS Validation') {
             steps {
-                script {
-                    docker.withRegistry('', 'DOCKERHUB_CREDS') {
-                        sh """
-                            docker push ${env.DOCKER_IMAGE_NAME}:frontend
-                            docker push ${env.DOCKER_IMAGE_NAME}:backend
-                        """
-                    }
-                }
+                sh 'aws s3 ls'
             }
         }
-        stage('Provision EKS Infrastructure') {
-            steps {
-                dir('terraform') {
-                    script {
-                        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY', credentialsId: '', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                            sh """
-                                terraform init
-                                terraform apply -auto-approve
-                            """
-                        }   
-                    }
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     parallel { 
+        //         stage('Build Frontend') {
+        //             steps {
+        //                 sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
+        //             }
+        //         }
+        //         stage('Build Backend') {
+        //             steps {
+        //                 sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Push Docker Images') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('', 'DOCKERHUB_CREDS') {
+        //                 sh """
+        //                     docker push ${env.DOCKER_IMAGE_NAME}:frontend
+        //                     docker push ${env.DOCKER_IMAGE_NAME}:backend
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Provision EKS Infrastructure') {
+        //     steps {
+        //         dir('terraform') {
+        //             script {
+        //                 sh """
+        //                     terraform init
+        //                     terraform apply -auto-approve
+        //                 """   
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
