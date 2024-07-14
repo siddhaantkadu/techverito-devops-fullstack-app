@@ -27,48 +27,43 @@ pipeline {
                     branch: "${env.GIT_BRANCH}"
             }
         }
-        stage('AWS Validation') {
-            steps {
-                sh 'aws ec2 describe-instances'
+        stage('Build Docker Image') {
+            parallel { 
+                stage('Build Frontend') {
+                    steps {
+                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
+                    }
+                }
+                stage('Build Backend') {
+                    steps {
+                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
+                    }
+                }
             }
         }
-        // stage('Build Docker Image') {
-        //     parallel { 
-        //         stage('Build Frontend') {
-        //             steps {
-        //                 sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
-        //             }
-        //         }
-        //         stage('Build Backend') {
-        //             steps {
-        //                 sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('Push Docker Images') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', 'DOCKERHUB_CREDS') {
-        //                 sh """
-        //                     docker push ${env.DOCKER_IMAGE_NAME}:frontend
-        //                     docker push ${env.DOCKER_IMAGE_NAME}:backend
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('Provision EKS Infrastructure') {
-        //     steps {
-        //         dir('terraform') {
-        //             script {
-        //                 sh """
-        //                     terraform init
-        //                     terraform apply -auto-approve
-        //                 """   
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry('', 'DOCKERHUB_CREDS') {
+                        sh """
+                            docker push ${env.DOCKER_IMAGE_NAME}:frontend
+                            docker push ${env.DOCKER_IMAGE_NAME}:backend
+                        """
+                    }
+                }
+            }
+        }
+        stage('Provision EKS Infrastructure') {
+            steps {
+                dir('terraform') {
+                    script {
+                        sh """
+                            terraform init
+                            terraform apply -auto-approve
+                        """   
+                    }
+                }
+            }
+        }
     }
 }
