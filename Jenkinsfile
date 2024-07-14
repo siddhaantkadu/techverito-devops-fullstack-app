@@ -53,7 +53,7 @@ pipeline {
                 }
             }
         }
-        stage('Provision Infrastructure') {
+        stage('Provision EKS Infrastructure') {
             steps {
                 dir('terraform') {
                     sh """
