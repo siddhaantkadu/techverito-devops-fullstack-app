@@ -7,7 +7,7 @@ COPY frontend/package*.json ./
 # Install dependencies
 RUN npm install
 
-COPY ../frontend .
+COPY ./frontend .
 
 # Build the React app
 RUN npm run build

@@ -31,16 +31,12 @@ pipeline {
             parallel { 
                 stage('Build Frontend') {
                     steps {
-                        dir('docker-files') {
-                            sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker-frontend ."
-                        }
+                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
                     }
                 }
                 stage('Build Backend') {
                     steps {
-                        dir('docker-files') {
-                            sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker-backend ."
-                        }
+                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
                     }
                 }
             }
