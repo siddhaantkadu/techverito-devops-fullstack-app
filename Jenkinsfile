@@ -12,8 +12,8 @@ pipeline {
         DOCKER_IMAGE_NAME = 'siddhaant/techverito-devops-fullstack-app'
         DOCKER_FILE_FRONTEND = 'docker-froentend'
         DOCKER_FILE_BACKEND = 'docker-backend'
-        AWS_ACCESS_KEY = ' '
-        AWS_SECRET_ACCESS_KEY = ' '
+        EKS_AWS_ACCESS_KEY = 'AWS_ACCESS_KEY'
+        EKS_AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
     }
     stages {
         stage('Clean Workspace') {
@@ -56,10 +56,14 @@ pipeline {
         stage('Provision EKS Infrastructure') {
             steps {
                 dir('terraform') {
-                    sh """
-                        terraform init
-                        terraform apply -auto-approve
-                    """
+                    script {
+                        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY', credentialsId: '', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                            sh """
+                                terraform init
+                                terraform apply -auto-approve
+                            """
+                        }   
+                    }
                 }
             }
         }
