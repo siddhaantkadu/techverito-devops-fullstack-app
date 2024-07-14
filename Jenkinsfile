@@ -12,6 +12,8 @@ pipeline {
         DOCKER_IMAGE_NAME = 'siddhaant/techverito-devops-fullstack-app'
         DOCKER_FILE_FRONTEND = 'docker-froentend'
         DOCKER_FILE_BACKEND = 'docker-backend'
+        AWS_ACCESS_KEY = ' '
+        AWS_SECRET_ACCESS_KEY = ' '
     }
     stages {
         stage('Clean Workspace') {
@@ -29,12 +31,16 @@ pipeline {
             parallel { 
                 stage('Build Frontend') {
                     steps {
-                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker/docker-frontend ."
+                        dir('docker-files') {
+                            sh "docker build -t ${env.DOCKER_IMAGE_NAME}:frontend -f docker-frontend ."
+                        }
                     }
                 }
                 stage('Build Backend') {
                     steps {
-                        sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker/docker-backend ."
+                        dir('docker-files') {
+                            sh "docker build -t ${env.DOCKER_IMAGE_NAME}:backend -f docker-backend ."
+                        }
                     }
                 }
             }
@@ -48,6 +54,16 @@ pipeline {
                             docker push ${env.DOCKER_IMAGE_NAME}:backend
                         """
                     }
+                }
+            }
+        }
+        stage('Provision Infrastructure') {
+            steps {
+                dir('terraform') {
+                    sh """
+                        terraform init
+                        terraform apply -auto-approve
+                    """
                 }
             }
         }
