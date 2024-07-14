@@ -29,7 +29,7 @@ pipeline {
         }
         stage('AWS Validation') {
             steps {
-                sh 'aws s3 ls'
+                sh 'aws ec2 describe-instances'
             }
         }
         // stage('Build Docker Image') {
